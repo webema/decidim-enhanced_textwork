@@ -5,7 +5,7 @@ module Decidim
     # Exposes the paragraph vote resource so users can vote paragraphs.
     class ParagraphVotesController < Decidim::EnhancedTextwork::ApplicationController
       include ParagraphVotesHelper
-      include Rectify::ControllerHelpers
+      include Decidim::ControllerHelpers
 
       helper_method :paragraph
 

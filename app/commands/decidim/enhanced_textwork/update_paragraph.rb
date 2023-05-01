@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # A command with all the business logic when a user updates a paragraph.
-    class UpdateParagraph < Rectify::Command
+    class UpdateParagraph < Decidim::Command
       include ::Decidim::MultipleAttachmentsMethods
       include GalleryMethods
       include HashtagsMethods

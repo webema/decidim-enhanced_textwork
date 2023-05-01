@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       #  A command with all the business logic when an admin batch updates paragraphs scope.
-      class UpdateParagraphScope < Rectify::Command
+      class UpdateParagraphScope < Decidim::Command
         include TranslatableAttributes
         # Public: Initializes the command.
         #

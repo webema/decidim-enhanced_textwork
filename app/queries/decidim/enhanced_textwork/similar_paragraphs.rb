@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # Class used to retrieve similar paragraphs.
-    class SimilarParagraphs < Rectify::Query
+    class SimilarParagraphs < Decidim::Query
       include Decidim::TranslationsHelper
 
       # Syntactic sugar to initialize the class and return the queried objects.

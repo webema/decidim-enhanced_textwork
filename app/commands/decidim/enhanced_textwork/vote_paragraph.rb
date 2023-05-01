@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # A command with all the business logic when a user votes a paragraph.
-    class VoteParagraph < Rectify::Command
+    class VoteParagraph < Decidim::Command
       # Public: Initializes the command.
       #
       # paragraph     - A Decidim::EnhancedTextwork::Paragraph object.

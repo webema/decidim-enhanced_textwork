@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # A command with all the business logic when a user publishes a draft paragraph.
-    class PublishParagraph < Rectify::Command
+    class PublishParagraph < Decidim::Command
       # Public: Initializes the command.
       #
       # paragraph     - The paragraph to publish.

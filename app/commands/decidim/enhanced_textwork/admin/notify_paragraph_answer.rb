@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command to notify about the change of the published state for a paragraph.
-      class NotifyParagraphAnswer < Rectify::Command
+      class NotifyParagraphAnswer < Decidim::Command
         # Public: Initializes the command.
         #
         # paragraph - The paragraph to write the answer for.

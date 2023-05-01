@@ -5,13 +5,13 @@ module Decidim
     # A service to encapsualte all the logic when searching and filtering
     # paragraphs in a participatory process.
     class ParagraphSearch < ResourceSearch
-      text_search_fields :title, :body
+      # text_search_fields :title, :body
 
       # Public: Initializes the service.
       # component     - A Decidim::Component to get the paragraphs from.
       # page        - The page number to paginate the results.
       # per_page    - The number of paragraphs to return per page.
-      def initialize(options = {})
+      def initialize(object, params = {}, options = {})
         options[:scope] = options.fetch(:scope, Paragraph)
         options[:scope] = options[:state_withdraw] == "withdrawn" ? options[:scope].withdrawn : options[:scope].except_withdrawn
         super(options[:scope], options)

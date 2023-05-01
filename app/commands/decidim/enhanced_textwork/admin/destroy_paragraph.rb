@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command with all the business logic when a user destroys a draft paragraph.
-      class DestroyParagraph < Rectify::Command
+      class DestroyParagraph < Decidim::Command
         # Public: Initializes the command.
         #
         # paragraph     - The paragraph to destroy.

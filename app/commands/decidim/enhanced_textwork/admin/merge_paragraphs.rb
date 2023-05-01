@@ -5,7 +5,7 @@ module Decidim
     module Admin
       # A command with all the business logic when an admin merges paragraphs from
       # one component to another.
-      class MergeParagraphs < Rectify::Command
+      class MergeParagraphs < Decidim::Command
         # Public: Initializes the command.
         #
         # form - A form object with the params.

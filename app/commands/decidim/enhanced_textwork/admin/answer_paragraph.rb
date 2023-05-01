@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command with all the business logic when an admin answers a paragraph.
-      class AnswerParagraph < Rectify::Command
+      class AnswerParagraph < Decidim::Command
         # Public: Initializes the command.
         #
         # form - A form object with the params.

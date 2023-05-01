@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command with all the business logic when an admin creates a private note paragraph.
-      class CreateParagraphNote < Rectify::Command
+      class CreateParagraphNote < Decidim::Command
         # Public: Initializes the command.
         #
         # form         - A form object with the params.

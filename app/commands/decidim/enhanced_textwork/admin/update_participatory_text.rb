@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command with all the business logic when an admin updates participatory text paragraphs.
-      class UpdateParticipatoryText < Rectify::Command
+      class UpdateParticipatoryText < Decidim::Command
         include Decidim::TranslatableAttributes
 
         # Public: Initializes the command.

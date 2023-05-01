@@ -5,7 +5,7 @@ module Decidim
     module Admin
       # A command with all the business logic to assign paragraphs to a given
       # valuator.
-      class AssignParagraphsToValuator < Rectify::Command
+      class AssignParagraphsToValuator < Decidim::Command
         # Public: Initializes the command.
         #
         # form - A form object with the params.

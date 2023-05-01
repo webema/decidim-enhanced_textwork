@@ -5,7 +5,7 @@ module Decidim
     module Admin
       # A command with all the business logic when an admin splits paragraphs from
       # one component to another.
-      class SplitParagraphs < Rectify::Command
+      class SplitParagraphs < Decidim::Command
         # Public: Initializes the command.
         #
         # form - A form object with the params.

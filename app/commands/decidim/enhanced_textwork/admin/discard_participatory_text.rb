@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command with all the business logic related with an admin discarding participatory text paragraphs.
-      class DiscardParticipatoryText < Rectify::Command
+      class DiscardParticipatoryText < Decidim::Command
         # Public: Initializes the command.
         #
         # form - A PreviewParticipatoryTextForm form object with the params.

@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # A command with all the business logic when a user unvotes a paragraph.
-    class UnvoteParagraph < Rectify::Command
+    class UnvoteParagraph < Decidim::Command
       # Public: Initializes the command.
       #
       # paragraph     - A Decidim::EnhancedTextwork::Paragraph object.

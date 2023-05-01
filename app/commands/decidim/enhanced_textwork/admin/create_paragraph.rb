@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       # A command with all the business logic when a user creates a new paragraph.
-      class CreateParagraph < Rectify::Command
+      class CreateParagraph < Decidim::Command
         include ::Decidim::AttachmentMethods
         include GalleryMethods
         include HashtagsMethods

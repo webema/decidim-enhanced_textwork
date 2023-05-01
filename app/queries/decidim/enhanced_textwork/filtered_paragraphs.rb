@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # A class used to find paragraphs filtered by components and a date range
-    class FilteredParagraphs < Rectify::Query
+    class FilteredParagraphs < Decidim::Query
       # Syntactic sugar to initialize the class and return the queried objects.
       #
       # components - An array of Decidim::Component

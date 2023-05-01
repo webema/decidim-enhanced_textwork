@@ -4,7 +4,7 @@ module Decidim
   module EnhancedTextwork
     module Admin
       #  A command with all the business logic when an admin batch updates paragraphs category.
-      class UpdateParagraphCategory < Rectify::Command
+      class UpdateParagraphCategory < Decidim::Command
         # Public: Initializes the command.
         #
         # category_id - the category id to update

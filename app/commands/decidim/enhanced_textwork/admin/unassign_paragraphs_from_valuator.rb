@@ -5,7 +5,7 @@ module Decidim
     module Admin
       # A command with all the business logic to unassign paragraphs from a given
       # valuator.
-      class UnassignParagraphsFromValuator < Rectify::Command
+      class UnassignParagraphsFromValuator < Decidim::Command
         # Public: Initializes the command.
         #
         # form - A form object with the params.

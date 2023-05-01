@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # A command with all the business logic when a user withdraws a new paragraph.
-    class WithdrawParagraph < Rectify::Command
+    class WithdrawParagraph < Decidim::Command
       # Public: Initializes the command.
       #
       # paragraph     - The paragraph to withdraw.
