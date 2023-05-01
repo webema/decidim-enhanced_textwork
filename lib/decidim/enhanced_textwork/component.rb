@@ -164,285 +164,285 @@ Decidim.register_component(:enhanced_textwork) do |component|
     imports.creator Decidim::EnhancedTextwork::ParagraphCreator
   end
 
-  component.seeds do |participatory_space|
-    admin_user = Decidim::User.find_by(
-      organization: participatory_space.organization,
-      email: "admin@example.org"
-    )
+  # component.seeds do |participatory_space|
+  #   admin_user = Decidim::User.find_by(
+  #     organization: participatory_space.organization,
+  #     email: "admin@example.org"
+  #   )
 
-    step_settings = if participatory_space.allows_steps?
-                      { participatory_space.active_step.id => { votes_enabled: true, votes_blocked: false, creation_enabled: true } }
-                    else
-                      {}
-                    end
+  #   step_settings = if participatory_space.allows_steps?
+  #                     { participatory_space.active_step.id => { votes_enabled: true, votes_blocked: false, creation_enabled: true } }
+  #                   else
+  #                     {}
+  #                   end
 
-    params = {
-      name: Decidim::Components::Namer.new(participatory_space.organization.available_locales, :paragraphs).i18n_name,
-      manifest_name: :paragraphs,
-      published_at: Time.current,
-      participatory_space: participatory_space,
-      settings: {
-        vote_limit: 0,
-        collaborative_drafts_enabled: true
-      },
-      step_settings: step_settings
-    }
+  #   params = {
+  #     name: Decidim::Components::Namer.new(participatory_space.organization.available_locales, :paragraphs).i18n_name,
+  #     manifest_name: :paragraphs,
+  #     published_at: Time.current,
+  #     participatory_space: participatory_space,
+  #     settings: {
+  #       vote_limit: 0,
+  #       collaborative_drafts_enabled: true
+  #     },
+  #     step_settings: step_settings
+  #   }
 
-    component = Decidim.traceability.perform_action!(
-      "publish",
-      Decidim::Component,
-      admin_user,
-      visibility: "all"
-    ) do
-      Decidim::Component.create!(params)
-    end
+  #   component = Decidim.traceability.perform_action!(
+  #     "publish",
+  #     Decidim::Component,
+  #     admin_user,
+  #     visibility: "all"
+  #   ) do
+  #     Decidim::Component.create!(params)
+  #   end
 
-    if participatory_space.scope
-      scopes = participatory_space.scope.descendants
-      global = participatory_space.scope
-    else
-      scopes = participatory_space.organization.scopes
-      global = nil
-    end
+  #   if participatory_space.scope
+  #     scopes = participatory_space.scope.descendants
+  #     global = participatory_space.scope
+  #   else
+  #     scopes = participatory_space.organization.scopes
+  #     global = nil
+  #   end
 
-    5.times do |n|
-      state, answer, state_published_at = if n > 3
-                                            ["accepted", Decidim::Faker::Localized.sentence(word_count: 10), Time.current]
-                                          elsif n > 2
-                                            ["rejected", nil, Time.current]
-                                          elsif n > 1
-                                            ["evaluating", nil, Time.current]
-                                          elsif n.positive?
-                                            ["accepted", Decidim::Faker::Localized.sentence(word_count: 10), nil]
-                                          else
-                                            [nil, nil, nil]
-                                          end
+  #   5.times do |n|
+  #     state, answer, state_published_at = if n > 3
+  #                                           ["accepted", Decidim::Faker::Localized.sentence(word_count: 10), Time.current]
+  #                                         elsif n > 2
+  #                                           ["rejected", nil, Time.current]
+  #                                         elsif n > 1
+  #                                           ["evaluating", nil, Time.current]
+  #                                         elsif n.positive?
+  #                                           ["accepted", Decidim::Faker::Localized.sentence(word_count: 10), nil]
+  #                                         else
+  #                                           [nil, nil, nil]
+  #                                         end
 
-      params = {
-        component: component,
-        category: participatory_space.categories.sample,
-        scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
-        title: { en: Faker::Lorem.sentence(word_count: 2) },
-        body: { en: Faker::Lorem.paragraphs(number: 2).join("\n") },
-        state: state,
-        answer: answer,
-        answered_at: state.present? ? Time.current : nil,
-        state_published_at: state_published_at,
-        published_at: Time.current
-      }
+  #     params = {
+  #       component: component,
+  #       category: participatory_space.categories.sample,
+  #       scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
+  #       title: { en: Faker::Lorem.sentence(word_count: 2) },
+  #       body: { en: Faker::Lorem.paragraphs(number: 2).join("\n") },
+  #       state: state,
+  #       answer: answer,
+  #       answered_at: state.present? ? Time.current : nil,
+  #       state_published_at: state_published_at,
+  #       published_at: Time.current
+  #     }
 
-      paragraph = Decidim.traceability.perform_action!(
-        "publish",
-        Decidim::EnhancedTextwork::Paragraph,
-        admin_user,
-        visibility: "all"
-      ) do
-        paragraph = Decidim::EnhancedTextwork::Paragraph.new(params)
-        paragraph.add_coauthor(participatory_space.organization)
-        paragraph.save!
-        paragraph
-      end
+  #     paragraph = Decidim.traceability.perform_action!(
+  #       "publish",
+  #       Decidim::EnhancedTextwork::Paragraph,
+  #       admin_user,
+  #       visibility: "all"
+  #     ) do
+  #       paragraph = Decidim::EnhancedTextwork::Paragraph.new(params)
+  #       paragraph.add_coauthor(participatory_space.organization)
+  #       paragraph.save!
+  #       paragraph
+  #     end
 
-      if n.positive?
-        Decidim::User.where(decidim_organization_id: participatory_space.decidim_organization_id).all.sample(n).each do |author|
-          user_group = [true, false].sample ? Decidim::UserGroups::ManageableUserGroups.for(author).verified.sample : nil
-          paragraph.add_coauthor(author, user_group: user_group)
-        end
-      end
+  #     if n.positive?
+  #       Decidim::User.where(decidim_organization_id: participatory_space.decidim_organization_id).all.sample(n).each do |author|
+  #         user_group = [true, false].sample ? Decidim::UserGroups::ManageableUserGroups.for(author).verified.sample : nil
+  #         paragraph.add_coauthor(author, user_group: user_group)
+  #       end
+  #     end
 
-      if paragraph.state.nil?
-        email = "amendment-author-#{participatory_space.underscored_name}-#{participatory_space.id}-#{n}-amend#{n}@example.org"
-        name = "#{Faker::Name.name} #{participatory_space.id} #{n} amend#{n}"
+  #     if paragraph.state.nil?
+  #       email = "amendment-author-#{participatory_space.underscored_name}-#{participatory_space.id}-#{n}-amend#{n}@example.org"
+  #       name = "#{Faker::Name.name} #{participatory_space.id} #{n} amend#{n}"
 
-        author = Decidim::User.find_or_initialize_by(email: email)
-        author.update!(
-          password: "password1234",
-          password_confirmation: "password1234",
-          name: name,
-          nickname: Faker::Twitter.unique.screen_name,
-          organization: component.organization,
-          tos_agreement: "1",
-          confirmed_at: Time.current
-        )
+  #       author = Decidim::User.find_or_initialize_by(email: email)
+  #       author.update!(
+  #         password: "password1234",
+  #         password_confirmation: "password1234",
+  #         name: name,
+  #         nickname: Faker::Twitter.unique.screen_name,
+  #         organization: component.organization,
+  #         tos_agreement: "1",
+  #         confirmed_at: Time.current
+  #       )
 
-        group = Decidim::UserGroup.create!(
-          name: Faker::Name.name,
-          nickname: Faker::Twitter.unique.screen_name,
-          email: Faker::Internet.email,
-          extended_data: {
-            document_number: Faker::Code.isbn,
-            phone: Faker::PhoneNumber.phone_number,
-            verified_at: Time.current
-          },
-          decidim_organization_id: component.organization.id,
-          confirmed_at: Time.current
-        )
+  #       group = Decidim::UserGroup.create!(
+  #         name: Faker::Name.name,
+  #         nickname: Faker::Twitter.unique.screen_name,
+  #         email: Faker::Internet.email,
+  #         extended_data: {
+  #           document_number: Faker::Code.isbn,
+  #           phone: Faker::PhoneNumber.phone_number,
+  #           verified_at: Time.current
+  #         },
+  #         decidim_organization_id: component.organization.id,
+  #         confirmed_at: Time.current
+  #       )
 
-        Decidim::UserGroupMembership.create!(
-          user: author,
-          role: "creator",
-          user_group: group
-        )
+  #       Decidim::UserGroupMembership.create!(
+  #         user: author,
+  #         role: "creator",
+  #         user_group: group
+  #       )
 
-        params = {
-          component: component,
-          category: participatory_space.categories.sample,
-          scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
-          title: { en: "#{paragraph.title["en"]} #{Faker::Lorem.sentence(word_count: 1)}" },
-          body: { en: "#{paragraph.body["en"]} #{Faker::Lorem.sentence(word_count: 3)}" },
-          state: "evaluating",
-          answer: nil,
-          answered_at: Time.current,
-          published_at: Time.current
-        }
+  #       params = {
+  #         component: component,
+  #         category: participatory_space.categories.sample,
+  #         scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
+  #         title: { en: "#{paragraph.title["en"]} #{Faker::Lorem.sentence(word_count: 1)}" },
+  #         body: { en: "#{paragraph.body["en"]} #{Faker::Lorem.sentence(word_count: 3)}" },
+  #         state: "evaluating",
+  #         answer: nil,
+  #         answered_at: Time.current,
+  #         published_at: Time.current
+  #       }
 
-        emendation = Decidim.traceability.perform_action!(
-          "create",
-          Decidim::EnhancedTextwork::Paragraph,
-          author,
-          visibility: "public-only"
-        ) do
-          emendation = Decidim::EnhancedTextwork::Paragraph.new(params)
-          emendation.add_coauthor(author, user_group: author.user_groups.first)
-          emendation.save!
-          emendation
-        end
+  #       emendation = Decidim.traceability.perform_action!(
+  #         "create",
+  #         Decidim::EnhancedTextwork::Paragraph,
+  #         author,
+  #         visibility: "public-only"
+  #       ) do
+  #         emendation = Decidim::EnhancedTextwork::Paragraph.new(params)
+  #         emendation.add_coauthor(author, user_group: author.user_groups.first)
+  #         emendation.save!
+  #         emendation
+  #       end
 
-        Decidim::Amendment.create!(
-          amender: author,
-          amendable: paragraph,
-          emendation: emendation,
-          state: "evaluating"
-        )
-      end
+  #       Decidim::Amendment.create!(
+  #         amender: author,
+  #         amendable: paragraph,
+  #         emendation: emendation,
+  #         state: "evaluating"
+  #       )
+  #     end
 
-      (n % 3).times do |m|
-        email = "vote-author-#{participatory_space.underscored_name}-#{participatory_space.id}-#{n}-#{m}@example.org"
-        name = "#{Faker::Name.name} #{participatory_space.id} #{n} #{m}"
+  #     (n % 3).times do |m|
+  #       email = "vote-author-#{participatory_space.underscored_name}-#{participatory_space.id}-#{n}-#{m}@example.org"
+  #       name = "#{Faker::Name.name} #{participatory_space.id} #{n} #{m}"
 
-        author = Decidim::User.find_or_initialize_by(email: email)
-        author.update!(
-          password: "password1234",
-          password_confirmation: "password1234",
-          name: name,
-          nickname: Faker::Twitter.unique.screen_name,
-          organization: component.organization,
-          tos_agreement: "1",
-          confirmed_at: Time.current,
-          personal_url: Faker::Internet.url,
-          about: Faker::Lorem.paragraph(sentence_count: 2)
-        )
+  #       author = Decidim::User.find_or_initialize_by(email: email)
+  #       author.update!(
+  #         password: "password1234",
+  #         password_confirmation: "password1234",
+  #         name: name,
+  #         nickname: Faker::Twitter.unique.screen_name,
+  #         organization: component.organization,
+  #         tos_agreement: "1",
+  #         confirmed_at: Time.current,
+  #         personal_url: Faker::Internet.url,
+  #         about: Faker::Lorem.paragraph(sentence_count: 2)
+  #       )
 
-        Decidim::EnhancedTextwork::ParagraphVote.create!(paragraph: paragraph, author: author) unless paragraph.published_state? && paragraph.rejected?
-        Decidim::EnhancedTextwork::ParagraphVote.create!(paragraph: emendation, author: author) if emendation
-      end
+  #       Decidim::EnhancedTextwork::ParagraphVote.create!(paragraph: paragraph, author: author) unless paragraph.published_state? && paragraph.rejected?
+  #       Decidim::EnhancedTextwork::ParagraphVote.create!(paragraph: emendation, author: author) if emendation
+  #     end
 
-      unless paragraph.published_state? && paragraph.rejected?
-        (n * 2).times do |index|
-          email = "endorsement-author-#{participatory_space.underscored_name}-#{participatory_space.id}-#{n}-endr#{index}@example.org"
-          name = "#{Faker::Name.name} #{participatory_space.id} #{n} endr#{index}"
+  #     unless paragraph.published_state? && paragraph.rejected?
+  #       (n * 2).times do |index|
+  #         email = "endorsement-author-#{participatory_space.underscored_name}-#{participatory_space.id}-#{n}-endr#{index}@example.org"
+  #         name = "#{Faker::Name.name} #{participatory_space.id} #{n} endr#{index}"
 
-          author = Decidim::User.find_or_initialize_by(email: email)
-          author.update!(
-            password: "password1234",
-            password_confirmation: "password1234",
-            name: name,
-            nickname: Faker::Twitter.unique.screen_name,
-            organization: component.organization,
-            tos_agreement: "1",
-            confirmed_at: Time.current
-          )
-          if index.even?
-            group = Decidim::UserGroup.create!(
-              name: Faker::Name.name,
-              nickname: Faker::Twitter.unique.screen_name,
-              email: Faker::Internet.email,
-              extended_data: {
-                document_number: Faker::Code.isbn,
-                phone: Faker::PhoneNumber.phone_number,
-                verified_at: Time.current
-              },
-              decidim_organization_id: component.organization.id,
-              confirmed_at: Time.current
-            )
+  #         author = Decidim::User.find_or_initialize_by(email: email)
+  #         author.update!(
+  #           password: "password1234",
+  #           password_confirmation: "password1234",
+  #           name: name,
+  #           nickname: Faker::Twitter.unique.screen_name,
+  #           organization: component.organization,
+  #           tos_agreement: "1",
+  #           confirmed_at: Time.current
+  #         )
+  #         if index.even?
+  #           group = Decidim::UserGroup.create!(
+  #             name: Faker::Name.name,
+  #             nickname: Faker::Twitter.unique.screen_name,
+  #             email: Faker::Internet.email,
+  #             extended_data: {
+  #               document_number: Faker::Code.isbn,
+  #               phone: Faker::PhoneNumber.phone_number,
+  #               verified_at: Time.current
+  #             },
+  #             decidim_organization_id: component.organization.id,
+  #             confirmed_at: Time.current
+  #           )
 
-            Decidim::UserGroupMembership.create!(
-              user: author,
-              role: "creator",
-              user_group: group
-            )
-          end
-          Decidim::Endorsement.create!(resource: paragraph, author: author, user_group: author.user_groups.first)
-        end
-      end
+  #           Decidim::UserGroupMembership.create!(
+  #             user: author,
+  #             role: "creator",
+  #             user_group: group
+  #           )
+  #         end
+  #         Decidim::Endorsement.create!(resource: paragraph, author: author, user_group: author.user_groups.first)
+  #       end
+  #     end
 
-      (n % 3).times do
-        author_admin = Decidim::User.where(organization: component.organization, admin: true).all.sample
+  #     (n % 3).times do
+  #       author_admin = Decidim::User.where(organization: component.organization, admin: true).all.sample
 
-        Decidim::EnhancedTextwork::ParagraphNote.create!(
-          paragraph: paragraph,
-          author: author_admin,
-          body: Faker::Lorem.paragraphs(number: 2).join("\n")
-        )
-      end
+  #       Decidim::EnhancedTextwork::ParagraphNote.create!(
+  #         paragraph: paragraph,
+  #         author: author_admin,
+  #         body: Faker::Lorem.paragraphs(number: 2).join("\n")
+  #       )
+  #     end
 
-      Decidim::Comments::Seed.comments_for(paragraph)
+  #     Decidim::Comments::Seed.comments_for(paragraph)
 
-      #
-      # Collaborative drafts
-      #
-      state = if n > 3
-                "published"
-              elsif n > 2
-                "withdrawn"
-              else
-                "open"
-              end
-      author = Decidim::User.where(organization: component.organization).all.sample
+  #     #
+  #     # Collaborative drafts
+  #     #
+  #     state = if n > 3
+  #               "published"
+  #             elsif n > 2
+  #               "withdrawn"
+  #             else
+  #               "open"
+  #             end
+  #     author = Decidim::User.where(organization: component.organization).all.sample
 
-      draft = Decidim.traceability.perform_action!("create", Decidim::EnhancedTextwork::CollaborativeDraft, author) do
-        draft = Decidim::EnhancedTextwork::CollaborativeDraft.new(
-          component: component,
-          category: participatory_space.categories.sample,
-          scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
-          title: Faker::Lorem.sentence(word_count: 2),
-          body: Faker::Lorem.paragraphs(number: 2).join("\n"),
-          state: state,
-          published_at: Time.current
-        )
-        draft.coauthorships.build(author: participatory_space.organization)
-        draft.save!
-        draft
-      end
+  #     draft = Decidim.traceability.perform_action!("create", Decidim::EnhancedTextwork::CollaborativeDraft, author) do
+  #       draft = Decidim::EnhancedTextwork::CollaborativeDraft.new(
+  #         component: component,
+  #         category: participatory_space.categories.sample,
+  #         scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
+  #         title: Faker::Lorem.sentence(word_count: 2),
+  #         body: Faker::Lorem.paragraphs(number: 2).join("\n"),
+  #         state: state,
+  #         published_at: Time.current
+  #       )
+  #       draft.coauthorships.build(author: participatory_space.organization)
+  #       draft.save!
+  #       draft
+  #     end
 
-      case n
-      when 2
-        author2 = Decidim::User.where(organization: component.organization).all.sample
-        Decidim::Coauthorship.create(coauthorable: draft, author: author2)
-        author3 = Decidim::User.where(organization: component.organization).all.sample
-        Decidim::Coauthorship.create(coauthorable: draft, author: author3)
-        author4 = Decidim::User.where(organization: component.organization).all.sample
-        Decidim::Coauthorship.create(coauthorable: draft, author: author4)
-        author5 = Decidim::User.where(organization: component.organization).all.sample
-        Decidim::Coauthorship.create(coauthorable: draft, author: author5)
-        author6 = Decidim::User.where(organization: component.organization).all.sample
-        Decidim::Coauthorship.create(coauthorable: draft, author: author6)
-      when 3
-        author2 = Decidim::User.where(organization: component.organization).all.sample
-        Decidim::Coauthorship.create(coauthorable: draft, author: author2)
-      end
+  #     case n
+  #     when 2
+  #       author2 = Decidim::User.where(organization: component.organization).all.sample
+  #       Decidim::Coauthorship.create(coauthorable: draft, author: author2)
+  #       author3 = Decidim::User.where(organization: component.organization).all.sample
+  #       Decidim::Coauthorship.create(coauthorable: draft, author: author3)
+  #       author4 = Decidim::User.where(organization: component.organization).all.sample
+  #       Decidim::Coauthorship.create(coauthorable: draft, author: author4)
+  #       author5 = Decidim::User.where(organization: component.organization).all.sample
+  #       Decidim::Coauthorship.create(coauthorable: draft, author: author5)
+  #       author6 = Decidim::User.where(organization: component.organization).all.sample
+  #       Decidim::Coauthorship.create(coauthorable: draft, author: author6)
+  #     when 3
+  #       author2 = Decidim::User.where(organization: component.organization).all.sample
+  #       Decidim::Coauthorship.create(coauthorable: draft, author: author2)
+  #     end
 
-      Decidim::Comments::Seed.comments_for(draft)
-    end
+  #     Decidim::Comments::Seed.comments_for(draft)
+  #   end
 
-    Decidim.traceability.update!(
-      Decidim::EnhancedTextwork::CollaborativeDraft.all.sample,
-      Decidim::User.where(organization: component.organization).all.sample,
-      component: component,
-      category: participatory_space.categories.sample,
-      scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
-      title: Faker::Lorem.sentence(word_count: 2),
-      body: Faker::Lorem.paragraphs(number: 2).join("\n")
-    )
-  end
+  #   Decidim.traceability.update!(
+  #     Decidim::EnhancedTextwork::CollaborativeDraft.all.sample,
+  #     Decidim::User.where(organization: component.organization).all.sample,
+  #     component: component,
+  #     category: participatory_space.categories.sample,
+  #     scope: Faker::Boolean.boolean(true_ratio: 0.5) ? global : scopes.sample,
+  #     title: Faker::Lorem.sentence(word_count: 2),
+  #     body: Faker::Lorem.paragraphs(number: 2).join("\n")
+  #   )
+  # end
 end
